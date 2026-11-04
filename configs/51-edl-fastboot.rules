@@ -1,0 +1,16 @@
+# udev rules for MediaTek BootROM / Preloader / Fastboot and Amazon ADB (Fire HD 10 - suez)
+# Place in /etc/udev/rules.d/51-edl-fastboot.rules and run: sudo udevadm control --reload-rules && sudo udevadm trigger
+
+# MediaTek USB BootROM (BROM handshake mode)
+SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="0003", MODE="0666", GROUP="plugdev", TAG+="uaccess"
+
+# MediaTek Preloader / DA
+SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="2000", MODE="0666", GROUP="plugdev", TAG+="uaccess"
+
+# Hacked Fastboot / Standard Fastboot (HTC / MTK)
+SUBSYSTEM=="usb", ATTR{idVendor}=="0bb4", ATTR{idProduct}=="0c01", MODE="0666", GROUP="plugdev", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="0c01", MODE="0666", GROUP="plugdev", TAG+="uaccess"
+
+# Amazon ADB (Fire OS / Recovery / LineageOS)
+SUBSYSTEM=="usb", ATTR{idVendor}=="1949", MODE="0666", GROUP="plugdev", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", MODE="0666", GROUP="plugdev", TAG+="uaccess"

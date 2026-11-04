@@ -1,0 +1,35 @@
+# Binaries, Archives & OS images (do not track large files)
+*.zip
+*.tar.gz
+*.tar.xz
+*.tar
+*.img
+*.bin
+*.apk
+*.iso
+
+# Backups & local dumps
+backup/
+backups/
+*.bak
+*.dump
+
+# Secrets & host keys
+.env
+*.pub
+adb_keys
+id_rsa
+id_ed25519
+
+# Editor & OS files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Logs & temp files
+*.log
+tmp/
+temp/

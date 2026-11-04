@@ -1,0 +1,58 @@
+#!/bin/bash
+# NetHunter KeX (TigerVNC + XFCE4) Manager for Fire HD 10
+#
+# Usage:
+#   kex start   - Starts KeX VNC server on display :1 (port 5901)
+#   kex stop    - Stops KeX VNC server
+#   kex status  - Checks whether KeX is running
+#   kex passwd  - Sets or changes the VNC password
+
+ACTION="${1:-status}"
+VNC_PORT=5901
+DISPLAY_NUM=":1"
+RESOLUTION="1920x1200"
+
+case "$ACTION" in
+    start)
+        if netstat -tlpn 2>/dev/null | grep -q ":$VNC_PORT"; then
+            echo "[*] NetHunter KeX server is already running on port $VNC_PORT ($DISPLAY_NUM)."
+        else
+            echo "[*] Starting NetHunter KeX server ($RESOLUTION on $DISPLAY_NUM)..."
+            # Ensure VNC directories and xstartup exist
+            mkdir -p /root/.config/tigervnc
+            [ -f /root/.config/tigervnc/xstartup ] || cat << 'EOF' > /root/.config/tigervnc/xstartup
+#!/bin/sh
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+exec startxfce4
+EOF
+            chmod +x /root/.config/tigervnc/xstartup
+            [ -L /root/.vnc ] || ln -sf /root/.config/tigervnc /root/.vnc
+
+            vncserver "$DISPLAY_NUM" -geometry "$RESOLUTION" -depth 24 -localhost no
+            echo "[+] KeX started successfully on port $VNC_PORT ($DISPLAY_NUM)."
+            echo "[+] Connect via VNC client to <device-ip>:$VNC_PORT (or display 1)."
+        fi
+        ;;
+    stop|kill)
+        echo "[*] Stopping NetHunter KeX server..."
+        vncserver -kill "$DISPLAY_NUM" 2>/dev/null || true
+        killall Xtigervnc 2>/dev/null || true
+        echo "[+] KeX stopped."
+        ;;
+    status)
+        if netstat -tlpn 2>/dev/null | grep -q ":$VNC_PORT"; then
+            echo "[+] NetHunter KeX is RUNNING on port $VNC_PORT (Display $DISPLAY_NUM)."
+        else
+            echo "[-] NetHunter KeX is STOPPED."
+        fi
+        ;;
+    passwd)
+        mkdir -p /root/.config/tigervnc
+        vncpasswd /root/.config/tigervnc/passwd
+        ;;
+    *)
+        echo "Usage: kex [start|stop|status|passwd]"
+        exit 1
+        ;;
+esac

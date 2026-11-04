@@ -1,0 +1,12 @@
+#!/bin/sh
+# NetHunter KeX XFCE4 Desktop Session Startup
+
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+# Clean environment
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
+# Start XFCE4 desktop environment
+exec startxfce4

@@ -1,25 +1,29 @@
-# Amazon Fire HD 10 (2017 / suez) — Kali NetHunter & LineageOS Platform
+# Amazon Fire HD 10 (2017 / suez) — Official Kali NetHunter & LineageOS Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Device: suez](https://img.shields.io/badge/Device-Amazon_Fire_HD_10_(2017)-orange.svg)](https://en.wikipedia.org/wiki/Fire_HD#Seventh_generation)
 [![SoC: MT8173](https://img.shields.io/badge/SoC-MediaTek_MT8173-red.svg)](#hardware-specifications)
 [![ROM: LineageOS 14.1](https://img.shields.io/badge/ROM-LineageOS_14.1_(Android_7.1.2)-brightgreen.svg)](docs/04-lineageos-flash.md)
 [![Root: Magisk 26.4](https://img.shields.io/badge/Root-Magisk_v26.4-success.svg)](docs/04-lineageos-flash.md)
+[![NetHunter Suite: 2026.3](https://img.shields.io/badge/NetHunter-Official_Suite_(2026.3)-blue.svg)](docs/05-nethunter-deployment.md)
 [![Environment: NetHunter KeX](https://img.shields.io/badge/GUI-TigerVNC_XFCE4_(1920x1200)-blueviolet.svg)](docs/05-nethunter-deployment.md)
 
-This repository provides a **complete, reproducible, and fully automated toolchain** to transform the **Amazon Fire HD 10 (7th Generation, 2017, codename `suez`, model `KFSUWI`)** from a locked, telemetry-heavy FireOS tablet into a clean, debloated, high-performance **Kali NetHunter mobile penetration testing platform**.
+This repository provides a **complete, reproducible, and fully automated toolchain** to transform the **Amazon Fire HD 10 (7th Generation, 2017, codename `suez`, model `KFSUWI`)** from a locked, telemetry-heavy FireOS tablet into a clean, debloated, fully operational **Official Kali NetHunter mobile penetration testing platform**.
 
 ---
 
 ## 🌟 Key Highlights
 
+- **Full Official Offensive Security NetHunter Suite:** Fully integrated with the official **NetHunter Core App** (`com.offsec.nethunter`), **NetHunter Terminal** (`com.offsec.nhterm` NeoTerm), **NetHunter KeX** (`com.offsec.nethunter.kex`), and **NetHunter Store** (`com.offsec.nethunter.store`).
+- **Native Terminal Experience:** NetHunter Terminal provides dedicated multi-tab shells for **KALI** (`su -c bootkali_login`), **ANDROID SU**, and **ANDROID**.
+- **Graphical Services Manager:** One-tap controls inside the NetHunter App for Apache, OpenSSH, Metasploit RPC daemon, BeEF XSS framework, and USB Arsenal.
 - **100% Software-Based:** No opening the case, no prying plastics, and **no hardware test-point grounding required**. Bypasses patched FireOS bootloaders via software BROM downgrade.
 - **Zero Amazon Services:** Complete wipe of FireOS; 0 Amazon packages remain. Pure LineageOS 14.1 (Android 7.1.2 Nougat) environment with Trebuchet launcher.
 - **Permanent Bootloader Unlock:** amonet exploit suite permanently rewrites partition routing (`boot_x` / `recovery_x`) with TWRP 3.2.3-0 recovery.
 - **Modern Root:** Magisk v26.4 systemless root with full SU daemon.
-- **Full Kali NetHunter Suite:** Native ARM multi-arch (`armhf`) Debian userspace with thousands of pentesting tools (`nmap`, `metasploit-framework`, `sqlmap`, `aircrack-ng`, `wireshark`, `tshark`, `hydra`, etc.).
-- **KeX Remote Desktop GUI:** Full XFCE4 desktop session rendered on TigerVNC at native **1920x1200 resolution**, accessible directly on the device or over the network on port `5901`.
-- **Headless & Automatable:** Production-grade Bash scripts for partition backup, TWRP OpenRecoveryScript flashing, and rootfs extraction.
+- **Full Kali Pentest Toolchain:** Native ARM multi-arch (`armhf`) Debian userspace with thousands of pentesting tools (`nmap`, `metasploit-framework`, `sqlmap`, `aircrack-ng`, `wireshark`, `tshark`, `hydra`, `responder`, etc.).
+- **KeX Remote Desktop GUI:** Full XFCE4 desktop session rendered on TigerVNC at native **1920x1200 resolution**, accessible directly on the tablet screen via the NetHunter KeX app or over the network on port `5901`.
+- **Headless & Automatable:** Production-grade Bash scripts for partition backup, TWRP OpenRecoveryScript flashing, and NetHunter rootfs deployment.
 
 ---
 
@@ -36,8 +40,9 @@ flowchart TD
     G --> H["TWRP 3.2.3-0 Permanent Flash<br/>(Dual-Routing GPT: boot_x & recovery_x)"]
     H --> I["Full Wipe & LineageOS 14.1 Flash<br/>(make_ext4fs /system + Magisk 26.4)"]
     I --> J["NVRAM Restoration & ADB Key Injected<br/>(Factory MACs + Zero-Touch ADB)"]
-    J --> K["Kali NetHunter Chroot Deployed<br/>(/data/local/nhsystem/kali-armhf)"]
-    K --> L["KeX Desktop & Termux Launcher<br/>(TigerVNC :1 + /system/bin/bootkali)"]
+    J --> K["Kali NetHunter Rootfs Deployed<br/>(/data/local/nhsystem/kali-armhf)"]
+    K --> L["Official NetHunter App Suite Installed<br/>(NetHunter App, nhterm, KeX Client, Store)"]
+    L --> M["Fully Operational NetHunter Platform<br/>(On-Device Terminal, Services Mgr & KeX 1920x1200)"]
 ```
 
 ---
@@ -58,33 +63,36 @@ firehd10-suez-nethunter/
 │   ├── 02-software-root-fireos.md     # Offline Matrix root exploit on patched FireOS
 │   ├── 03-amonet-unlock-twrp.md       # BROM downgrade, fastboot, and permanent TWRP install
 │   ├── 04-lineageos-flash.md          # Headless ROM flash, Magisk root & NVRAM restore
-│   ├── 05-nethunter-deployment.md     # Chroot architecture, KeX setup & usage
+│   ├── 05-nethunter-deployment.md     # Full NetHunter App Suite, KeX GUI & nhterm integration
 │   └── 06-hardware-wifi-otg.md        # MT6631 Wi-Fi analysis & USB-OTG adapter guide
 └── scripts/
     ├── backup_lowlevel.sh             # Dumps proinfo, kb, dkb, metadata, and /data/nvram
     ├── flash_lineageos_headless.sh    # Automated headless TWRP ROM & Magisk installer
-    ├── deploy_nethunter.sh            # Extracts rootfs, configures KeX, installs bootkali
-    ├── bootkali                       # Android chroot launcher script with clean env
+    ├── deploy_nethunter.sh            # Installs NetHunter apps, rootfs, KeX & chroot hooks
+    ├── bootkali                       # Standalone Android chroot launcher script
     ├── kex                            # TigerVNC / XFCE4 KeX lifecycle manager
-    └── setup_termux_aliases.sh        # Injects shortcuts into Termux on device
+    └── setup_termux_aliases.sh        # Optional shortcut installer for Termux
 ```
 
 ---
 
 ## 🔐 Verified Checksums (SHA-256 / MD5)
 
-All external archives used throughout this workflow have been tested and verified:
+All external archives and official Offensive Security packages used throughout this workflow have been tested and verified:
 
-| File Name | Size | Checksum | Function |
+| File Name | Version | Checksum | Function |
 |---|---|---|---|
-| `20165195.zip` | 4.8 MB | SHA-256: `8bfc3d5c75964e5fa28c8ffa39a87249ba10ea4180f55f546b2dcc286a585ea8` | Matrix root exploit binary & scripts |
-| `SuperSU_18+.zip` | 4.9 MB | SHA-256: `b572c1a982d1e0baeb571d3bc0df7f6be11b14553c181c9e0bf737cc4a4fbbfd` | SuperSU su binaries & payload |
-| `Superuser.apk` (v2.82) | 5.9 MB | SHA-256: `2c7be9795a408d6fc74bc7286658dfe12252824867c3a2b726c1f3c78cee918b` | SuperSU root permission manager APK |
-| `amonet-suez-v1.1.2.zip` | 13.9 MB | SHA-256: `d5f439df03a4ae911bebd05d1c4afaa7e6740ebc596a87c55b5d2571a750f59f` | amonet BROM exploit & payload suite |
-| `lineage-14.1-20190926-UNOFFICIAL-suez.zip` | 381 MB | MD5: `93ce115e4aff083047d9b53a8b0fb6b7` | Stable LineageOS 14.1 ROM for suez |
-| `Magisk-v26.4.zip` | 11.9 MB | SHA-256: Official Release | Magisk root flashable package |
-| `kali-nethunter-rootfs-full-armhf.tar.xz` | 1.7 GB | Official Kali Release | Full Kali NetHunter ARMHF root filesystem |
-| `com.termux_118.apk` | 97 MB | Official F-Droid / GitHub | Modern Termux terminal emulator |
+| `20165195.zip` | 1.0 | SHA-256: `8bfc3d5c75964e5fa28c8ffa39a87249ba10ea4180f55f546b2dcc286a585ea8` | Matrix root exploit binary & scripts |
+| `SuperSU_18+.zip` | 2.78 | SHA-256: `b572c1a982d1e0baeb571d3bc0df7f6be11b14553c181c9e0bf737cc4a4fbbfd` | SuperSU su binaries & payload |
+| `Superuser.apk` | 2.82 | SHA-256: `2c7be9795a408d6fc74bc7286658dfe12252824867c3a2b726c1f3c78cee918b` | SuperSU root permission manager APK |
+| `amonet-suez-v1.1.2.zip` | 1.1.2 | SHA-256: `d5f439df03a4ae911bebd05d1c4afaa7e6740ebc596a87c55b5d2571a750f59f` | amonet BROM exploit & payload suite |
+| `lineage-14.1-20190926-UNOFFICIAL-suez.zip` | 14.1 | MD5: `93ce115e4aff083047d9b53a8b0fb6b7` | Stable LineageOS 14.1 ROM for suez |
+| `Magisk-v26.4.zip` | 26.4 | SHA-256: Official Release | Magisk root flashable package |
+| `kali-nethunter-rootfs-full-armhf.tar.xz` | Rolling | SHA-256: Official Release | Full Kali NetHunter ARMHF root filesystem |
+| `com.offsec.nethunter` (NetHunter App) | 2026.3 | SHA-256: `8bd29db16a06f22c3ef341849bd13b73338d0be1f4f8a75bab5d50b0fbf52f10` | Official NetHunter Control Console |
+| `com.offsec.nhterm` (NetHunter Terminal) | 2025.4 | SHA-256: `f190aa87e05c5a8473644cd1bed471d4427d2ba9d30b2e50c83a5eacaa3d54d5` | Multi-tab NeoTerm Terminal Emulator |
+| `com.offsec.nethunter.kex` (NetHunter KeX) | v5.2.5 | SHA-256: `768dc86613f9a8b46b09ee37ba303806283497487dc029d79226bd0a09886b4f` | Official NetHunter Desktop VNC Client |
+| `com.offsec.nethunter.store` (NetHunter Store)| 2019.3b | SHA-256: `54661b4f326c65cd6037186dc7a503b2473a3b011ca0913244b13b056ac0c06e` | F-Droid Security App Repository |
 
 ---
 
@@ -134,39 +142,31 @@ Execute the headless flashing script:
 ```
 *(Details in [docs/04-lineageos-flash.md](docs/04-lineageos-flash.md))*
 
-### Phase 4: Deploy Kali NetHunter & KeX
-Deploy rootfs, configure wrappers, and initialize KeX:
+### Phase 4: Deploy Official NetHunter Suite & KeX
+Deploy rootfs, official Offensive Security APKs, wrappers, and initialize KeX:
 ```bash
 ./scripts/deploy_nethunter.sh \
   kali-nethunter-rootfs-full-armhf.tar.xz \
-  com.termux_118.apk
+  /path/to/nethunter-apks/
 ```
 *(Details in [docs/05-nethunter-deployment.md](docs/05-nethunter-deployment.md))*
 
 ---
 
-## 🖥️ Operating Kali NetHunter
+## 🖥️ Operating the NetHunter Platform
 
-### Command-Line Interface (CLI)
-From your computer:
-```bash
-adb shell "su -c /system/bin/bootkali"
-```
-Or directly on the tablet inside Termux:
-```bash
-nh
-# or:
-kali
-```
+### On-Device Workflow:
+- **Terminal Access:** Open **NetHunter Terminal** (`nhterm`) from your app drawer. Select the `KALI` tab to immediately access the Kali Linux root shell.
+- **Service Management:** Open the **NetHunter** app to toggle Apache, OpenSSH, Metasploit, or BeEF with one tap.
+- **KeX Desktop Session:** Open **NetHunter** > **KeX Manager** > **Start Server**, then tap **Open KeX Client** (or open **NetHunter KeX** directly) and connect to `127.0.0.1:5901` (password `kali`).
 
-### KeX Remote Desktop GUI
-Start the VNC server on display `:1` (port `5901`):
-```bash
-su -c /system/bin/kex start
-```
-Connect any VNC client (VNC Viewer, Remmina, TigerVNC) to:
-- Host: `127.0.0.1:5901` (on-device) or `<tablet-ip>:5901` (over network)
-- Password: `kali` (configurable via `kex passwd`)
+### Workstation / Headless Workflow:
+- **CLI via ADB:**
+  ```bash
+  adb shell "su -c /system/bin/bootkali"
+  ```
+- **CLI via SSH:** Connect directly to `root@<tablet-ip>:22` (when SSH service is enabled).
+- **Desktop via VNC:** Connect Remmina, TigerVNC, or RealVNC to `<tablet-ip>:5901` (password `kali`).
 
 ---
 
@@ -181,21 +181,33 @@ See [docs/06-hardware-wifi-otg.md](docs/06-hardware-wifi-otg.md) for full hardwa
 
 ---
 
-## ✅ Live Verification & Sanity Checks
+## ✅ Live Verification & Hardware Evidence
 
 Verified on real hardware:
 
 ```bash
+# Verify LineageOS release
 $ adb shell getprop ro.build.version.release
 7.1.2
 
+# Confirm total removal of Amazon packages
 $ adb shell "pm list packages | grep -i amazon"
 (empty - 0 packages)
 
+# Confirm Official NetHunter Application Suite
+$ adb shell pm list packages | grep -i offsec
+package:com.offsec.nethunter
+package:com.offsec.nhterm
+package:com.offsec.nethunter.kex
+package:com.offsec.nethunter.store
+package:com.offsec.nhvnc
+
+# Confirm Magisk Root
 $ adb shell "su -c id"
 uid=0(root) gid=0(root) groups=0(root) context=u:r:magisk:s0
 
-$ adb shell "su -c '/system/bin/bootkali nmap --version'"
+# Confirm Kali Chroot & Toolchain Execution
+$ adb shell "su -c '/data/data/com.offsec.nethunter/scripts/bin/busybox_nh chroot /data/local/nhsystem/kali-armhf nmap --version'"
 Nmap version 7.99 ( https://nmap.org )
 Platform: arm-unknown-linux-gnueabihf
 ```
@@ -206,9 +218,10 @@ Platform: arm-unknown-linux-gnueabihf
 
 - **Disclaimer:** Modifying bootloaders, flashing custom ROMs, and writing low-level partitions can potentially brick your device if instructions are not followed carefully. Always verify your device model (`suez` / `KFSUWI`) and keep low-level partition backups.
 - **Credits:**
+  - `Offensive Security` for the incredible Kali NetHunter platform, NetHunter Terminal, and KeX desktop.
   - `k4y0z` & `chaosmaster` for the revolutionary [amonet](https://github.com/chaosmaster/amonet) BootROM exploit suite.
   - `retyre` & `3ch01c` for preserving the offline Matrix root method.
-  - LineageOS and Offensive Security (Kali NetHunter) development teams.
+  - The LineageOS community.
 
 ---
 
